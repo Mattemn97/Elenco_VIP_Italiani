@@ -1,14 +1,16 @@
-name: Genera Installer Windows
+name: Genera Installer e Pubblica Release
 
-# Esegue questa azione ogni volta che fai una "push" sul ramo main
 on:
   push:
     branches: [ main ]
-  workflow_dispatch: # Permette anche di avviarlo a mano da GitHub
+  workflow_dispatch:
+
+# Fondamentale: diamo al bot il permesso di scrivere nella sezione Releases
+permissions:
+  contents: write
 
 jobs:
   build:
-    # Usa un server Windows virtuale fornito gratis da GitHub
     runs-on: windows-latest
 
     steps:
@@ -21,9 +23,10 @@ jobs:
     - name: 🔨 Compila il file .exe autoestraente
       run: iscc setup.iss
 
-    - name: 📦 Rilascia il file .exe generato
-      uses: actions/upload-artifact@v4
+    - name: 🚀 Pubblica l'eseguibile nella sezione Releases
+      uses: softprops/action-gh-release@v2
       with:
-        name: VIP-Installer-Windows
-        # Prende il file dalla cartella Output generata da Inno Setup
-        path: Output/Installa_Elenco_VIP.exe
+        tag_name: "latest" # Aggiornerà sempre questo "tag"
+        name: "Ultima Versione - Elenco VIP"
+        body: "Scarica l'eseguibile qui sotto per installare o aggiornare la dashboard sul tuo PC Windows."
+        files: Output/Installa_Elenco_VIP.exe
