@@ -1,0 +1,29 @@
+name: Genera Installer Windows
+
+# Esegue questa azione ogni volta che fai una "push" sul ramo main
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch: # Permette anche di avviarlo a mano da GitHub
+
+jobs:
+  build:
+    # Usa un server Windows virtuale fornito gratis da GitHub
+    runs-on: windows-latest
+
+    steps:
+    - name: 📥 Clona il repository
+      uses: actions/checkout@v4
+
+    - name: ⚙️ Installa Inno Setup compiler
+      run: choco install innosetup -y
+
+    - name: 🔨 Compila il file .exe autoestraente
+      run: iscc setup.iss
+
+    - name: 📦 Rilascia il file .exe generato
+      uses: actions/upload-artifact@v4
+      with:
+        name: VIP-Installer-Windows
+        # Prende il file dalla cartella Output generata da Inno Setup
+        path: Output/Installa_Elenco_VIP.exe
